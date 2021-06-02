@@ -1,0 +1,160 @@
+<HTML>
+<HEAD>
+<SCRIPT LANGUAGE="JAVASCRIPT" TYPE="text/javascript">
+<!-- Begin
+
+// Mr-Brain
+function copy() {
+highlight();
+textRange = document.extractor.rawdata.createTextRange();
+textRange.execCommand("RemoveFormat");
+textRange.execCommand("Copy");
+window.alert("The content has been copied to your clipboard.");
+}
+
+function highlight(){
+document.extractor.rawdata.focus()
+document.extractor.rawdata.select()
+}
+
+function checksep(value){
+if (value) document.extractor.sep.value = "other";
+}
+
+function numonly(value){
+if (isNaN(value)) {
+    window.alert("Please enter a number or else \nleave blank for no grouping.");
+    document.extractor.groupby.focus();
+}
+}
+
+function findEmail() {
+var email = "No email address detected";
+var a = 0;
+var ingroup = 0;
+var separator = document.extractor.sep.value;
+var groupby = Math.round(document.extractor.groupby.value);
+
+if (separator == "new") separator = "\n";
+if (separator == "other") separator = document.extractor.othersep.value;
+var rawemail = document.extractor.rawdata.value.match(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+)/gi);
+var norepeat = new Array();
+if (rawemail) {
+	for (var i=0; i<rawemail.length; i++) {
+		var repeat = 0;
+		
+		// Check for repeated emails routine
+		for (var j=i+1; j<rawemail.length; j++) {
+			if (rawemail[i] == rawemail[j]) {
+				repeat++;
+			}
+		}
+		
+		// Create new array for non-repeated emails
+		if (repeat == 0) {
+			norepeat[a] = rawemail[i];
+			a++;
+		}
+	}
+	if (document.extractor.sort.checked) norepeat = norepeat.sort(); // Sort the array
+	email = "";
+	// Join emails together with separator
+	for (var k = 0; k < norepeat.length; k++) {
+		if (ingroup != 0) email += separator;
+		email += norepeat[k];
+		ingroup++;
+		
+		if (groupby) {
+		    if (ingroup == groupby) {
+		        email += '\n\n';
+		        ingroup = 0;
+		    }
+		}
+	}
+}
+
+// Return array length
+var count = norepeat.length;
+
+// Print results
+document.extractor.count.value = count;
+document.extractor.rawdata.value = email;
+}
+//  End -->
+</SCRIPT>
+
+<STYLE TYPE="text/css">
+BODY              { background:#FFF }
+BODY,td,th,ul,p   { font: normal normal normal 10pt/1em Verdana; color: #000; }
+A:link, A:visited { text-decoration: none; color: #059; }
+A:active, A:hover { text-decoration: underline; color: #D14; }
+.bordercolor      { background:#666 }
+.maincolor        { background:#CCC }
+.button           { background:#CCC }
+.titlebarcolor    { background:#007 }
+.titlefont        { font: normal normal bold 10pt/1em Verdana; color: #FFF; }
+.copyrightfont    { font: normal normal normal 7.5pt/1.5em Verdana; color: #666; }
+</STYLE>
+
+<TITLE>Email Extractor Lite 1.4</TITLE>
+</HEAD>
+<BODY>
+
+<div id="main">
+<DIV ALIGN="CENTER">
+<FORM NAME="extractor">
+<TABLE CLASS="bordercolor" CELLPADDING=1 CELLSPACING=0 BORDER=0><TR><TD>
+<TABLE CLASS="maincolor" CELLPADDING=8 CELLSPACING=0 BORDER=0>
+<TR CLASS="titlebarcolor"> 
+<TD VALIGN="TOP" COLSPAN=2 COLSPAN=2><FONT CLASS="titlefont">Email Extractor Lite 1.4</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="TOP" ALIGN="CENTER" COLSPAN=2>
+<SCRIPT LANGUAGE="JAVASCRIPT">
+var introtext = 'Copy text from any source and paste it into here. Then click extract button. You can select different separator (or enter your own), group a number of emails and sort extracted emails alphabetically.';
+document.write('<TEXTAREA NAME="rawdata" rows=12 cols=80 onFocus="if (this.value == introtext) this.value = \'\';">' + introtext + '</TEXTAREA>');
+</SCRIPT>
+</TD></TR>
+<TR>
+<TD VALIGN="TOP" ALIGN="LEFT" COLSPAN=2>
+Separator:
+<SELECT NAME="sep">
+<OPTION VALUE="new">New Line</OPTION>
+<OPTION VALUE=", ">Comma</OPTION>
+<OPTION VALUE="|">Pipe</OPTION>
+<OPTION VALUE=" : ">Colon</OPTION>
+<OPTION VALUE="other">Other</OPTION>
+</SELECT>
+<INPUT TYPE="TEXT" NAME="othersep" SIZE=3 onBlur="checksep(this.value)">
+&nbsp;&nbsp;
+Group: <INPUT TYPE="TEXT" SIZE=3 NAME="groupby" onBlur="numonly(this.value)"> Emails
+&nbsp;&nbsp;
+<LABEL FOR="sortbox"><INPUT TYPE="CHECKBOX" NAME="sort" id="sortbox">Sort Alphabetically</LABEL>
+</TD></TR>
+<TR VALIGN="TOP"><TD ALIGN="LEFT">
+<INPUT TYPE="BUTTON" CLASS="button" VALUE="Extract" onClick="findEmail()"> 
+<INPUT TYPE="RESET" CLASS="button" VALUE="Reset">
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<!--
+if ((navigator.appName=="Microsoft Internet Explorer")&&(parseInt(navigator.appVersion)>=4)) {
+   document.write('<INPUT TYPE="BUTTON" CLASS="button" VALUE="Copy To Clipboard" onClick="copy();">');
+} else {
+   document.write('<INPUT TYPE="BUTTON" CLASS="button" VALUE="Highlight All" onClick="highlight();">');
+}
+// -->
+</SCRIPT>
+</TD>
+<TD ALIGN="RIGHT" VALIGN="BOTTOM" NOWRAP>
+Email count: <INPUT NAME="count" SIZE=5 READONLY>
+</TD>
+</TR>
+</TABLE>
+</TD></TR></TABLE>
+</FORM>
+<BR>
+<FONT CLASS="copyrightfont">&copy; 2009 <FONT CLASS="" color=green> Mr-Brain </FONT><FONT CLASS="copyrightfont"> - All Right Fucked</FONT>
+</DIV>
+</div>
+
+</BODY>
+</HTML>
